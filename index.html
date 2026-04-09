@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { 
-            background-color: #0f172a; /* slate-900 */
-            color: #cbd5e1; /* slate-300 */
+            background-color: #0f172a;
+            color: #cbd5e1;
             background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
         }
         .hero-banner {
@@ -18,16 +18,15 @@
             background-position: center;
         }
         .nav-link.active { 
-            background-color: #1e293b; /* slate-800 */
-            color: #38bdf8; /* sky-400 */
-            border-left: 4px solid #0284c7; /* sky-600 */
+            background-color: #1e293b;
+            color: #38bdf8;
+            border-left: 4px solid #0284c7;
         }
         .glass-panel {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -105,7 +104,6 @@
             <div class="flex flex-col lg:flex-row gap-8">
                 
                 <div class="w-full lg:w-1/4 space-y-6">
-                    
                     <div class="glass-panel rounded-xl overflow-hidden shadow-lg">
                         <div class="bg-slate-800/80 px-5 py-3 border-b border-slate-700 flex items-center">
                             <i class="fa-solid fa-server text-sky-400 mr-2"></i>
@@ -126,7 +124,7 @@
                             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Categories</h3>
                         </div>
                         <ul id="categories-list" class="divide-y divide-slate-700/50">
-                            </ul>
+                        </ul>
                     </div>
                 </div>
 
@@ -135,7 +133,7 @@
                         <i class="fa-solid fa-triangle-exclamation text-2xl text-red-500 mr-4 mt-1"></i>
                         <div>
                             <strong class="block font-bold text-red-400 text-lg">Store Offline</strong>
-                            <span class="text-sm">Unable to connect to the TCBilling API. The Minecraft server might be restarting.</span>
+                            <span class="text-sm">Unable to connect to the TCBilling API. Ensure your numeric IP and port are correct.</span>
                         </div>
                     </div>
 
@@ -144,7 +142,7 @@
                     </div>
 
                     <div id="packages-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        </div>
+                    </div>
                 </div>
 
                 <div class="w-full lg:w-1/4">
@@ -163,7 +161,7 @@
                             </div>
                             
                             <ul id="cart-items" class="max-h-72 overflow-y-auto divide-y divide-slate-700/50">
-                                </ul>
+                            </ul>
                             
                             <div id="cart-footer" class="hidden bg-slate-800/50 p-5 border-t border-slate-700">
                                 <div class="flex justify-between items-end mb-4">
@@ -194,8 +192,11 @@
 
     <script>
         // --- CONFIGURATION ---
-        // REPLACE THIS IP WITH YOUR MINECRAFT SERVER's PUBLIC IP
-        const API_URL = "https://corsproxy.io/?url=http://170.23.61.130:25565:25894/api/store";
+        // Change YOUR_SERVER_NUMERICAL_IP to your exact WitherHosting Numbered IP (e.g. 192.168.1.50)
+        const RAW_API_URL = "http://YOUR_SERVER_NUMERICAL_IP:25894/api/store";
+        
+        // This reliable proxy wrapper forces the browser to accept the connection regardless of HTTPS blocks
+        const API_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_API_URL)}`;
         // ---------------------
 
         let storeData = { categories: {}, packages: {} };
@@ -219,7 +220,6 @@
                 document.getElementById('nav-username').textContent = username;
                 document.getElementById('nav-account-type').textContent = accountType;
                 
-                // Fetch Minecraft avatar if premium, else use default Steve
                 const avatarUrl = accountType === 'Premium' 
                     ? `https://minotar.net/helm/${username}/40.png` 
                     : `https://minotar.net/helm/Steve/40.png`;
@@ -352,7 +352,6 @@
             cart[id]++;
             saveCart();
             
-            // Visual feedback
             const cartCount = document.getElementById('cart-count');
             cartCount.classList.add('animate-bounce');
             setTimeout(() => cartCount.classList.remove('animate-bounce'), 1000);
