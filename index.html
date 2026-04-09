@@ -311,12 +311,19 @@
             grid.innerHTML = '';
             let hasPackages = false;
 
-            if (storeData.categories[activeCategory]) {
-                title.textContent = storeData.categories[activeCategory];
-            }
+            const catName = storeData.categories[activeCategory] || "Unknown Category";
+            title.textContent = catName;
+
+            // Force everything to lowercase and strip hidden spaces for bulletproof matching
+            const safeActiveId = String(activeCategory).trim().toLowerCase();
+            const safeActiveName = String(catName).trim().toLowerCase();
 
             for (const [id, pkg] of Object.entries(storeData.packages)) {
-                if (pkg.category == activeCategory || pkg.category == storeData.categories[activeCategory]) {
+                // Clean the package's category the exact same way
+                const safePkgCat = String(pkg.category).trim().toLowerCase();
+                
+                // Check if it matches either the ID (e.g. "1") or the Name (e.g. "tags")
+                if (safePkgCat === safeActiveId || safePkgCat === safeActiveName) {
                     hasPackages = true;
                     grid.innerHTML += `
                         <div class="glass-panel rounded-xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-1 hover:shadow-sky-500/20 flex flex-col group">
