@@ -3,7 +3,7 @@ session_start();
 
 // --- CONFIGURATION ---
 // Change "127.0.0.1" to your Minecraft server IP and "25894" to your webhook port.
-$API_URL = "http://127.0.0.1:25894/api/store"; 
+$API_URL = "http://170.23.61.130:25894/api/store"; 
 // ---------------------
 
 // Handle Logout
