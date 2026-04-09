@@ -316,7 +316,7 @@
             }
 
             for (const [id, pkg] of Object.entries(storeData.packages)) {
-                if (pkg.category == activeCategory) {
+                if (pkg.category == activeCategory || pkg.category == storeData.categories[activeCategory]) {
                     hasPackages = true;
                     grid.innerHTML += `
                         <div class="glass-panel rounded-xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-1 hover:shadow-sky-500/20 flex flex-col group">
