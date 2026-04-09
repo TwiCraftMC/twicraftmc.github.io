@@ -314,15 +314,17 @@
             const catName = storeData.categories[activeCategory] || "Unknown Category";
             title.textContent = catName;
 
-            // Force everything to lowercase and strip hidden spaces for bulletproof matching
-            const safeActiveId = String(activeCategory).trim().toLowerCase();
-            const safeActiveName = String(catName).trim().toLowerCase();
+            // Ultimate Normalizer: Strips ALL spaces, underscores, dashes, and forces lowercase
+            const normalize = (str) => String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
+            
+            const safeActiveId = normalize(activeCategory);
+            const safeActiveName = normalize(catName);
 
             for (const [id, pkg] of Object.entries(storeData.packages)) {
                 // Clean the package's category the exact same way
-                const safePkgCat = String(pkg.category).trim().toLowerCase();
+                const safePkgCat = normalize(pkg.category);
                 
-                // Check if it matches either the ID (e.g. "1") or the Name (e.g. "tags")
+                // Now crate_keys, CRATE KEYS, and cratekeys will all perfectly match
                 if (safePkgCat === safeActiveId || safePkgCat === safeActiveName) {
                     hasPackages = true;
                     grid.innerHTML += `
