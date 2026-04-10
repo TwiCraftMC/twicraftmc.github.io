@@ -128,10 +128,15 @@ function renderCategories() {
     for (const [id, name] of Object.entries(storeData.categories)) {
         const isActive = activeCategory === id && !document.getElementById('section-packages').classList.contains('hidden');
         const li = document.createElement('li');
+        
+        const baseClasses = "block px-4 py-3 mb-2 transition-all duration-200 font-bold text-xs flex justify-between items-center rounded-xl border shadow-sm transform hover:-translate-y-1 hover:shadow-md";
+        const activeClasses = isActive 
+            ? "bg-purple-600 border-purple-400 text-white shadow-purple-600/30" 
+            : "bg-purple-950/50 border-purple-800 text-purple-300 hover:bg-purple-800/80 hover:border-purple-500 hover:text-white";
+
         li.innerHTML = `
-            <a href="#" onclick="showSection('${id}'); return false;" 
-               class="block px-3 py-2 hover:bg-purple-800/30 transition font-bold text-xs flex justify-between items-center rounded-lg ${isActive ? 'nav-link active' : 'text-purple-300'}">
-                ${name}
+            <a href="#" onclick="showSection('${id}'); return false;" class="${baseClasses} ${activeClasses}">
+                <span>${name}</span>
                 ${isActive ? '<i class="fa-solid fa-chevron-right text-[10px]"></i>' : ''}
             </a>`;
         list.appendChild(li);
