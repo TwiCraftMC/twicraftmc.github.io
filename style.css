@@ -1,0 +1,32 @@
+/* File: style.css */
+body { 
+    background-color: #2e1065; 
+    color: #e9d5ff;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+}
+.hero-banner {
+    background-image: linear-gradient(rgba(46, 16, 101, 0.85), rgba(46, 16, 101, 0.98)), url('https://images.unsplash.com/photo-1607513837890-349f481c0023?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+}
+.nav-link.active { 
+    background-color: #3b0764;
+    color: #c084fc;
+    border-left: 4px solid #a855f7;
+}
+.nav-link {
+    border-left: 4px solid transparent;
+}
+.glass-panel {
+    background: rgba(46, 16, 101, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #2e1065; }
+::-webkit-scrollbar-thumb { background: #581c87; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #7e22ce; }
+
+#cart-sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

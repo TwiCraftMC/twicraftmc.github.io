@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TwiCraftMC | Official Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                            950: '#2e1065',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+
+    <header class="bg-purple-900/50 sticky top-0 z-50 shadow-lg shadow-purple-900/50 backdrop-blur-md border-b border-purple-800">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg text-white">T</div>
+                <h1 class="text-xl font-bold tracking-wider text-white">TwiCraft<span class="text-purple-400">MC</span></h1>
+            </div>
+
+            <div class="hidden md:flex items-center bg-purple-950/50 border border-purple-700/50 rounded-full px-4 py-1.5 cursor-pointer hover:bg-purple-800/50 transition" onclick="copyIP()">
+                <span id="server-ip" class="text-xs font-bold text-purple-200 tracking-widest mr-2 uppercase">play.twicraftmc.com</span>
+                <i class="fa-solid fa-copy text-[10px] text-purple-400"></i>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div id="nav-user-info" class="hidden items-center gap-3 bg-purple-950/40 border border-purple-800 p-1 pr-4 rounded-full">
+                    <img id="nav-avatar" src="" class="w-8 h-8 rounded-full border border-purple-600" alt="Avatar">
+                    <div class="flex flex-col">
+                        <span id="nav-username" class="text-xs font-bold text-white leading-none">---</span>
+                        <span id="nav-account-type" class="text-[10px] text-purple-400 uppercase font-black tracking-tighter">---</span>
+                    </div>
+                </div>
+                <button onclick="toggleCart()" class="relative p-2 text-purple-200 hover:text-white transition">
+                    <i class="fa-solid fa-shopping-cart text-xl"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-purple-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1">0</span>
+                </button>
+                <button onclick="logout()" class="text-purple-400 hover:text-red-400 transition text-sm font-bold hidden md:block">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main id="store-layout" class="hidden flex-grow max-w-7xl mx-auto w-full px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="bg-purple-900/40 rounded-xl p-4 border border-purple-800 backdrop-blur-sm">
+                <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider mb-4 px-3">Store Navigation</h3>
+                <nav class="space-y-1">
+                    <a href="#" onclick="showSection('home')" id="nav-home" class="nav-link active flex items-center gap-3 px-3 py-2 text-purple-100 hover:bg-purple-800 rounded-lg transition">
+                        <i class="fa-solid fa-home w-5"></i> Homepage
+                    </a>
+                    <hr class="border-purple-800 my-2 mx-3">
+                    <ul id="categories-list" class="space-y-1"></ul>
+                </nav>
+            </div>
+            
+            <div class="bg-purple-900/40 rounded-xl p-6 border border-purple-800 text-center">
+                <i class="fa-solid fa-shield-halved text-3xl text-purple-500 mb-3"></i>
+                <h4 class="text-sm font-bold text-white mb-1">Secure Payments</h4>
+                <p class="text-[11px] text-purple-300 leading-relaxed">Automated GCash processing with instant verification.</p>
+            </div>
+        </aside>
+
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div id="section-home" class="space-y-6 block">
+                <div class="hero-banner rounded-2xl p-8 lg:p-12 border border-purple-700 shadow-2xl">
+                    <h2 class="text-3xl lg:text-5xl font-black mb-4 text-white">Welcome to the <br><span class="text-purple-400">TwiCraftMC Store</span></h2>
+                    <p class="text-lg text-purple-200 max-w-2xl mb-6 opacity-90 leading-relaxed">Support our community and unlock exclusive perks, ranks, and cosmetics! Your contributions keep the server running.</p>
+                    <button onclick="showSection('ranks')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 px-8 rounded-lg transition shadow-lg">
+                        <i class="fa-solid fa-shopping-bag mr-2"></i> Browse Store
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-purple-900/30 p-5 rounded-xl border border-purple-800">
+                        <h3 class="text-white font-bold mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-purple-400"></i> Information
+                        </h3>
+                        <p class="text-xs text-purple-200 leading-relaxed opacity-80">Ranks and items are delivered instantly. Please stay online while purchasing.</p>
+                    </div>
+                    <div class="bg-purple-900/30 p-5 rounded-xl border border-purple-800">
+                        <h3 class="text-white font-bold mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-headset text-purple-400"></i> Support
+                        </h3>
+                        <p class="text-xs text-purple-200 leading-relaxed opacity-80">Need help? Open a ticket in our Discord or contact an administrator.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-packages" class="hidden space-y-4">
+                <div class="flex items-center justify-between mb-4 border-b border-purple-800 pb-4">
+                    <h2 id="active-category-title" class="text-2xl font-black text-white capitalize tracking-tight">Category</h2>
+                    <div id="api-error" class="hidden text-red-400 text-xs font-bold animate-pulse">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i> API DISCONNECTED
+                    </div>
+                </div>
+                <div id="packages-grid" class="grid grid-cols-1 gap-3"></div>
+            </div>
+        </div>
+
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="bg-purple-900/40 rounded-xl p-4 border border-purple-800 backdrop-blur-sm">
+                <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider mb-4 px-3">
+                    <i class="fa-solid fa-clock-rotate-left mr-2"></i>Recent Purchases
+                </h3>
+                <ul id= "recent-purchases-list" class="space-y-3 px-3">
+                <ul class="space-y-3 px-3">
+                    <li class="flex items-center gap-3 text-sm p-2 rounded-lg bg-purple-950/30 border border-purple-800/30">
+                        <img src="https://minotar.net/avatar/Notch/32" class="rounded bg-purple-800" alt="Player">
+                        <div>
+                            <p class="font-bold text-purple-100">Notch</p>
+                            <p class="text-[10px] text-purple-400 uppercase font-black">MVP Rank</p>
+                        </div>
+                    </li>
+                    <li class="flex items-center gap-3 text-sm p-2 rounded-lg bg-purple-950/30 border border-purple-800/30">
+                        <img src="https://minotar.net/avatar/Steve/32" class="rounded bg-purple-800" alt="Player">
+                        <div>
+                            <p class="font-bold text-purple-100">Steve</p>
+                            <p class="text-[10px] text-purple-400 uppercase font-black">5x Mythic Keys</p>
+                        </div>
+                    </li>
+                </ul>
+                <div class="mt-4 px-3">
+                    <p class="text-[10px] text-purple-500 text-center italic">Updated in real-time</p>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <div id="login-gate" class="flex-grow flex items-center justify-center p-4">
+        <div class="max-w-md w-full glass-panel rounded-2xl p-8 shadow-2xl border border-purple-700">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center font-bold text-3xl shadow-lg text-white mx-auto mb-4">T</div>
+                <h2 class="text-2xl font-black text-white">Account Login</h2>
+                <p class="text-purple-300 text-sm">Enter your Minecraft name to enter the store</p>
+            </div>
+            <form onsubmit="login(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-purple-300 uppercase mb-2 ml-1">Username</label>
+                    <input type="text" id="login-username" required placeholder="EurusTheGreat"
+                           class="w-full bg-purple-950 border border-purple-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-purple-300 uppercase mb-2 ml-1">Account Type</label>
+                    <select id="login-type" class="w-full bg-purple-950 border border-purple-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        <option value="Premium">Premium Account</option>
+                        <option value="Cracked">Cracked Account</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-xl transition shadow-lg">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-purple-950 border-l border-purple-800 shadow-2xl transform translate-x-full z-50 flex flex-col">
+        <div class="p-6 border-b border-purple-800 flex justify-between items-center bg-purple-900/50 backdrop-blur-md">
+            <h2 class="text-xl font-black text-white flex items-center gap-3">
+                <i class="fa-solid fa-shopping-cart text-purple-400"></i>Your Cart
+            </h2>
+            <button onclick="toggleCart()" class="text-purple-400 hover:text-white transition">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <div class="flex-grow overflow-y-auto p-2">
+            <ul id="cart-items" class="space-y-1"></ul>
+            <div id="cart-empty" class="hidden text-center text-purple-500 py-20 px-10">
+                <i class="fa-solid fa-cart-arrow-down text-5xl mb-4 opacity-20"></i>
+                <p class="font-bold text-sm">Your shopping cart is currently empty.</p>
+            </div>
+        </div>
+
+        <div id="cart-footer" class="p-6 border-t border-purple-800 bg-purple-900/30">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-purple-300 font-bold">Grand Total</span>
+                <span class="text-2xl font-black text-white">₱<span id="cart-total">0.00</span></span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-xl transition shadow-lg">
+                Proceed to Checkout
+            </button>
+            <button onclick="clearCart()" class="w-full text-purple-500 hover:text-red-400 text-xs font-bold mt-4 uppercase tracking-widest">Clear Cart</button>
+        </div>
+    </div>
+
+    <footer class="border-t border-purple-800 bg-purple-950/80 py-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-center md:text-left">
+                <h4 class="text-white font-black mb-1">TwiCraftMC Store</h4>
+                <p class="text-purple-400 text-xs opacity-70">© 2026. All rights reserved. Not affiliated with Mojang AB.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-wider">
+                <a href="terms.html" class="text-purple-300 hover:text-purple-100 transition">Terms & Conditions</a>
+                <a href="privacy.html" class="text-purple-300 hover:text-purple-100 transition">Privacy Policy</a>
+                <a href="impressum.html" class="text-purple-300 hover:text-purple-100 transition">Impressum</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="checkout-modal" class="fixed inset-0 bg-purple-950/90 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+        <div class="max-w-md w-full glass-panel rounded-2xl p-8 border border-purple-700">
+            <div id="checkout-form-view">
+                <h2 class="text-2xl font-black text-white mb-2">GCash Checkout</h2>
+                <p class="text-purple-300 text-sm mb-6">Enter your phone number to generate a QR code.</p>
+                <form onsubmit="submitPhone(event)" class="space-y-4">
+                    <input type="text" id="checkout-phone" required placeholder="09123456789"
+                           class="w-full bg-purple-950 border border-purple-700 rounded-xl px-4 py-3 text-white">
+                    <button type="submit" class="w-full bg-purple-600 py-3 rounded-xl font-bold text-white shadow-lg">Generate QR</button>
+                    <button type="button" onclick="closeCheckout()" class="w-full text-purple-400 text-xs font-bold uppercase tracking-widest mt-2">Cancel</button>
+                </form>
+            </div>
+            <div id="checkout-qr-view" class="hidden text-center">
+                <h2 class="text-xl font-bold text-white mb-2">Scan & Pay</h2>
+                <div class="bg-white p-4 rounded-xl inline-block mb-4">
+                    <img id="checkout-qr-img" src="" class="w-48 h-48" alt="GCash QR">
+                </div>
+                <p class="text-purple-300 text-sm font-bold mb-4">Total: <span id="qr-amount-display" class="text-white">₱0.00</span></p>
+                <div class="bg-purple-900/50 p-3 rounded-lg text-xs text-purple-200 border border-purple-700">
+                    Waiting for payment detection...
+                </div>
+            </div>
+            <div id="checkout-success-view" class="hidden text-center">
+                <i class="fa-solid fa-circle-check text-green-500 text-5xl mb-4"></i>
+                <h2 class="text-2xl font-black text-white mb-2">Payment Received!</h2>
+                <p class="text-purple-300 text-sm mb-6">Use this code in-game to claim items:</p>
+                <div class="bg-purple-600/20 border border-purple-500 p-4 rounded-xl text-2xl font-mono font-black text-purple-400 mb-6" id="verification-code-display">000000</div>
+                <button onclick="closeCheckout()" class="w-full bg-purple-600 py-3 rounded-xl font-bold text-white">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
