@@ -102,6 +102,7 @@ async function fetchStoreData() {
             renderPackages();
         }
         renderCart();
+        renderRecentPurchases();
     } catch (error) { 
         console.error(error);
         document.getElementById('api-error').classList.remove('hidden'); 
@@ -252,14 +253,57 @@ async function checkStatus(phone) {
     try { 
         const res = await fetch(API_URL.replace('/api/store', `/api/status?phone=${phone}`)); 
         const data = await res.json(); 
+        
         if (data.status === 'VERIFIED') { 
             clearInterval(pollInterval); 
             document.getElementById('checkout-qr-view').classList.add('hidden'); 
             document.getElementById('checkout-success-view').classList.remove('hidden'); 
             document.getElementById('verification-code-display').textContent = data.code; 
+            
+            // --- NEW: Save the purchase data ---
+            const buyer = localStorage.getItem('username') || "Guest";
+            const firstPkgId = Object.keys(cart)[0];
+            const pkgName = storeData.packages[firstPkgId] ? storeData.packages[firstPkgId].name : "Store Item";
+            
+            recentPurchases.unshift({ player: buyer, package: pkgName });
+            localStorage.setItem('recentPurchases', JSON.stringify(recentPurchases));
+            renderRecentPurchases();
+            // -----------------------------------
+
             clearCart(); 
         } 
     } catch (err) {} 
+}
+
+// Load saved local purchases or empty array
+let recentPurchases = JSON.parse(localStorage.getItem('recentPurchases') || '[]');
+
+function renderRecentPurchases() {
+    const list = document.getElementById('recent-purchases-list');
+    if (!list) return;
+
+    // Prefers API data if you add it later, otherwise uses saved local data
+    const dataToRender = storeData.recentPurchases || recentPurchases;
+
+    if (!dataToRender || dataToRender.length === 0) {
+        list.innerHTML = `<li class="text-purple-400 text-xs italic text-center py-4">None</li>`;
+        return;
+    }
+
+    list.innerHTML = '';
+    // Show up to 5 most recent purchases
+    const displayList = dataToRender.slice(0, 5);
+
+    for (const purchase of displayList) {
+        list.innerHTML += `
+            <li class="flex items-center gap-3 text-sm p-2 rounded-lg bg-purple-950/30 border border-purple-800/30">
+                <img src="https://minotar.net/avatar/${purchase.player}/32" class="rounded bg-purple-800" alt="Player">
+                <div>
+                    <p class="font-bold text-purple-100">${purchase.player}</p>
+                    <p class="text-[10px] text-purple-400 uppercase font-black">${purchase.package}</p>
+                </div>
+            </li>`;
+    }
 }
 
 init();
