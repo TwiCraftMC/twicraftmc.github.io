@@ -68,7 +68,48 @@ function checkLogin() {
     }
 }
 
-function login(e) { e.preventDefault(); localStorage.setItem('username', document.getElementById('login-username').value); localStorage.setItem('account_type', document.getElementById('login-type').value); localStorage.setItem('cart', '{}'); cart = {}; checkLogin(); }
+async function login(e) { 
+    e.preventDefault(); 
+    
+    const username = document.getElementById('login-username').value;
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn ? btn.innerHTML : "Login";
+    
+    // UI Feedback while checking the database
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Verifying...';
+        btn.disabled = true;
+    }
+    
+    try {
+        // Query the Mojang database via a CORS-friendly proxy
+        const res = await fetch(`https://api.minetools.eu/uuid/${username}`);
+        const data = await res.json();
+        
+        // If a valid UUID is returned, it's Premium. Otherwise, it's Cracked.
+        const actualAccountType = (data.id && data.status !== "ERR") ? "Premium" : "Cracked";
+        
+        localStorage.setItem('username', username);
+        localStorage.setItem('account_type', actualAccountType);
+        localStorage.setItem('cart', '{}'); 
+        cart = {}; 
+        checkLogin();
+        
+    } catch (err) {
+        // Fallback in case the API goes down
+        console.warn("Verification API offline. Defaulting to Cracked.");
+        localStorage.setItem('username', username);
+        localStorage.setItem('account_type', "Cracked");
+        localStorage.setItem('cart', '{}'); 
+        cart = {}; 
+        checkLogin();
+    } finally {
+        if (btn) {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+}
 function logout() { localStorage.removeItem('username'); localStorage.removeItem('account_type'); localStorage.removeItem('cart'); checkLogin(); }
 function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
 function copyIP() { navigator.clipboard.writeText(document.getElementById('server-ip').innerText); alert('IP Copied!'); }
