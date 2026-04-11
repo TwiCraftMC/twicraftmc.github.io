@@ -82,11 +82,11 @@ async function login(e) {
     }
     
     try {
-        // Query the Ashcon API (Highly reliable & CORS-friendly)
-        const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${username}`);
+        // Query the PlayerDB API (The industry standard for web-based CORS lookups)
+        const res = await fetch(`https://playerdb.co/api/player/minecraft/${username}`);
         
-        // If the response is OK (200), the profile exists on Mojang. 
-        // If it throws a 404, it means the name doesn't exist.
+        // If the API finds the player, res.ok is true (Premium). 
+        // If the username doesn't exist on Mojang, it throws a 404 (Cracked).
         const actualAccountType = res.ok ? "Premium" : "Cracked";
         
         localStorage.setItem('username', username);
