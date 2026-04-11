@@ -312,3 +312,44 @@ function renderRecentPurchases() {
 }
 
 init();
+
+// --- [ ANTI-INSPECT SYSTEM ] ---
+
+const blockScreen = document.getElementById('block-screen');
+
+function slapUser() {
+    if (blockScreen) {
+        blockScreen.classList.remove('hidden');
+        // Optional: play a sound or log the attempt
+        console.warn("Unauthorized inspection attempt detected.");
+    }
+}
+
+// 1. Disable Right-Click
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    slapUser();
+});
+
+// 2. Disable Key Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
+document.addEventListener('keydown', (e) => {
+    if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
+        (e.ctrlKey && e.key === "u")
+    ) {
+        e.preventDefault();
+        slapUser();
+    }
+});
+
+// 3. The "Debugger" Trap (Professional Troll Move)
+// This creates a loop that pauses the browser execution ONLY if DevTools is open.
+setInterval(() => {
+    const startTime = performance.now();
+    debugger;
+    const endTime = performance.now();
+    if (endTime - startTime > 100) {
+        slapUser();
+    }
+}, 1000);
