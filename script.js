@@ -1,3 +1,5 @@
+// Files changed: script.js
+
 /* File: script.js */
 const API_URL = "https://api.twicraftmc.com/api/store";
 let storeData = { categories: {}, packages: {} };
@@ -160,7 +162,12 @@ function renderPackages() {
     const safeActiveName = normalize(catName);
 
     // Sort by price high to low just like your original code
-    const sortedPackages = Object.entries(storeData.packages).sort((a, b) => b[1].price - a[1].price);
+    let sortedPackages = Object.entries(storeData.packages).sort((a, b) => b[1].price - a[1].price);
+
+    // Alphabetical Sorting for Crate Keys
+    if (safeActiveName.includes("key") || safeActiveId.includes("key")) {
+        sortedPackages.sort((a, b) => a[1].name.localeCompare(b[1].name));
+    }
 
     for (const [id, pkg] of sortedPackages) {
         const safePkgCat = normalize(pkg.category || '');
@@ -171,7 +178,7 @@ function renderPackages() {
                 <div class="flex items-center justify-between p-5 bg-purple-900/30 border border-purple-800/50 rounded-xl hover:bg-purple-800/40 transition">
                     <h4 class="text-sm font-bold text-purple-100 uppercase">${pkg.name}</h4>
                     <div class="flex items-center gap-6">
-                        <span class="text-purple-300 font-black">₱${pkg.price.toFixed(2)}</span>
+                        <span class="text-purple-300 font-black">₱${formatMoney(pkg.price)}</span>
                         <button onclick="addToCart('${id}')" class="bg-purple-700 hover:bg-purple-600 text-white font-black py-2 px-6 rounded-lg text-[11px] border border-purple-600/50 shadow-sm">
                             ADD TO CART
                         </button>
@@ -222,7 +229,7 @@ function renderCart() {
                 </div>
                 <div class="flex justify-between items-center text-[10px]">
                     <span class="text-purple-300 bg-purple-950 px-2 py-1 rounded">Qty: ${qty}</span>
-                    <span class="text-purple-400 font-black">₱${(pkg.price * qty).toFixed(2)}</span>
+                    <span class="text-purple-400 font-black">₱${formatMoney(pkg.price * qty)}</span>
                 </div>
             </li>`;
     }
@@ -230,7 +237,7 @@ function renderCart() {
     const countEl = document.getElementById('cart-count');
     const totalEl = document.getElementById('cart-total');
     if (countEl) countEl.textContent = count;
-    if (totalEl) totalEl.textContent = total.toFixed(2);
+    if (totalEl) totalEl.textContent = formatMoney(total);
 }
 
 function checkout() { if (Object.keys(cart).length === 0) return; document.getElementById('checkout-modal').classList.remove('hidden'); }
@@ -244,12 +251,12 @@ async function submitPhone(e) {
         await fetch(API_URL.replace('/api/store', '/api/checkout'), { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ phone, amount: parseFloat(total), cart }) 
+            body: JSON.stringify({ phone, amount: parseFloat(total.replace(/,/g, '')), cart }) 
         }); 
         document.getElementById('checkout-form-view').classList.add('hidden'); 
         document.getElementById('checkout-qr-view').classList.remove('hidden'); 
         document.getElementById('qr-amount-display').textContent = `₱${total}`; 
-        document.getElementById('checkout-qr-img').src = API_URL.replace('/api/store', `/api/qr?amount=${total}`); 
+        document.getElementById('checkout-qr-img').src = API_URL.replace('/api/store', `/api/qr?amount=${total.replace(/,/g, '')}`); 
         pollInterval = setInterval(() => checkStatus(phone), 3000); 
     } catch (err) { alert("Server Error."); } 
 }
@@ -375,3 +382,11 @@ init();
     }, 100);
 })();
 // --- [ END NUCLEAR ANTI-INSPECT ] ---
+
+// --- Helper Function for Formatting Money ---
+function formatMoney(amount) {
+    return parseFloat(amount).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
