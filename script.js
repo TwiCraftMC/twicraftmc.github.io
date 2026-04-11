@@ -179,8 +179,8 @@ function renderPackages() {
             <h4 class="text-sm font-bold text-purple-100 uppercase">${pkg.name}</h4>
             <div class="flex items-center gap-6">
                 <span class="text-purple-300 font-black">₱${formatMoney(pkg.price)}</span>
-                <button onclick="addToCart('${id}')" class="bg-purple-700 hover:bg-purple-600 text-white font-black py-2 px-6 rounded-lg text-[11px] border border-purple-600/50 shadow-sm">
-                    ADD TO CART
+                <button onclick="addToCart('${id}')" class="bg-purple-700 hover:bg-purple-600 text-white hover:text-[#FFD700] font-black py-2 px-6 rounded-lg text-[11px] border border-purple-600/50 shadow-sm transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] group">
+                    <i class="fa-solid fa-cart-plus mr-1 transition-colors duration-300 group-hover:text-[#FFD700]"></i> ADD TO CART
                 </button>
             </div>
         </div>`;
@@ -235,7 +235,58 @@ function renderPackages() {
     }
 }
 
-function addToCart(id) { cart[id] = (cart[id] || 0) + 1; saveCart(); }
+let toastTimeout;
+
+function addToCart(id) { 
+    cart[id] = (cart[id] || 0) + 1; 
+    saveCart(); 
+    showToast(id);
+}
+
+function showToast(id) {
+    const pkg = storeData.packages[id];
+    if (!pkg) return;
+
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    // 1. Create a brand new toast element for this specific click
+    const toast = document.createElement('div');
+    
+    // Start it slightly lower and invisible for the slide-up effect
+    toast.className = "bg-purple-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 border border-purple-400 transition-all duration-300 transform translate-y-10 opacity-0";
+    
+    toast.innerHTML = `
+        <i class="fa-solid fa-circle-check text-2xl text-green-300"></i>
+        <div>
+            <p class="text-sm font-black tracking-wide">Added to Cart!</p>
+            <p class="text-xs text-purple-200 uppercase font-bold mt-0.5">${pkg.name}</p>
+        </div>
+    `;
+
+    // 2. Add it to the stack
+    container.appendChild(toast);
+
+    // 3. Trigger the entrance animation immediately after it's added
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.classList.remove('translate-y-10', 'opacity-0');
+        });
+    });
+
+    // 4. Set a dedicated timer to fade out THIS specific toast after 3 seconds
+    setTimeout(() => {
+        // Trigger exit animation (fade out and shrink slightly)
+        toast.classList.add('opacity-0', 'scale-95');
+        
+        // Wait for the CSS transition to finish (300ms) before physically deleting the code
+        setTimeout(() => {
+            if (container.contains(toast)) {
+                toast.remove();
+            }
+        }, 300);
+    }, 3000);
+}
 function removeFromCart(id) { if (cart[id]) { cart[id]--; if (cart[id] <= 0) delete cart[id]; } saveCart(); }
 function clearCart() { cart = {}; saveCart(); }
 function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); renderCart(); }

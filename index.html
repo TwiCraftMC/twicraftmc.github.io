@@ -96,10 +96,14 @@
             <div id="section-home" class="space-y-6 block">
                 <div class="hero-banner rounded-2xl p-8 lg:p-12 border border-purple-700 shadow-2xl">
                     <h2 class="text-3xl lg:text-5xl font-black mb-4 text-white">Welcome to the <br><span class="text-purple-400">TwiCraftMC Store</span></h2>
-                    <p class="text-lg text-purple-200 max-w-2xl mb-6 opacity-90 leading-relaxed">Support our community and unlock exclusive perks, ranks, and cosmetics! Your contributions keep the server running.</p>
-                    <button onclick="showSection('ranks')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 px-8 rounded-lg transition shadow-lg">
-                        <i class="fa-solid fa-shopping-bag mr-2"></i> Browse Store
-                    </button>
+                    <p class="text-lg text-purple-200 max-w-2xl mb-6 opacity-90 leading-relaxed">Welcome to the official Twilight Prison store. Here, you may purchase a variety of different items and packages for use on our Minecraft server.</p>
+                    <p class="text-lg text-purple-200 max-w-2xl mb-6 opacity-90 leading-relaxed">We only use GCash to securely process checkouts, and do not store any customer information.</p>
+                    <p class="text-lg text-purple-200 max-w-2xl mb-6 opacity-90 leading-relaxed">All items should be delivered automatically to you in game within 5-10 minutes after purchase.</p><br>
+                    <p class="text-2xl text-purple-200 max-w-2xl mb-6 opacity-90 leading-relaxed">Payment Issues?</p>
+                    <p class="text-lg text-purple-200 max-w-2xl mb-6 opacity-90 leading-relaxed">Join our Discord Support server:</p>
+                    <a href="https://dsc.gg/TwiCraftMC" target="_blank" class="inline-flex items-center bg-[#5865F2] hover:bg-[#4752C4] text-white hover:text-[#FFD700] font-bold py-3.5 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.6)] group">
+                        <i class="fa-brands fa-discord mr-2 text-xl transition-colors duration-300 group-hover:text-[#FFD700]"></i> Join our Discord
+                    </a>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -193,8 +197,8 @@
                 <span class="text-purple-300 font-bold">Grand Total</span>
                 <span class="text-2xl font-black text-white">₱<span id="cart-total">0.00</span></span>
             </div>
-            <button onclick="checkout()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-xl transition shadow-lg">
-                Proceed to Checkout
+            <button onclick="checkout()" class="w-full bg-purple-600 hover:bg-purple-500 text-white hover:text-[#FFD700] font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-[0_0_25px_rgba(168,85,247,0.5)] group">
+                <i class="fa-solid fa-credit-card mr-2 transition-colors duration-300 group-hover:text-[#FFD700]"></i> Proceed to Checkout
             </button>
             <button onclick="clearCart()" class="w-full text-purple-500 hover:text-red-400 text-xs font-bold mt-4 uppercase tracking-widest">Clear Cart</button>
         </div>
@@ -255,5 +259,6 @@
     </div>
 
     <script src="script.js"></script>
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 </body>
 </html>
