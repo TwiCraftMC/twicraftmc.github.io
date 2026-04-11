@@ -82,12 +82,12 @@ async function login(e) {
     }
     
     try {
-        // Query the Mojang database via a CORS-friendly proxy
-        const res = await fetch(`https://api.minetools.eu/uuid/${username}`);
-        const data = await res.json();
+        // Query the Ashcon API (Highly reliable & CORS-friendly)
+        const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${username}`);
         
-        // If a valid UUID is returned, it's Premium. Otherwise, it's Cracked.
-        const actualAccountType = (data.id && data.status !== "ERR") ? "Premium" : "Cracked";
+        // If the response is OK (200), the profile exists on Mojang. 
+        // If it throws a 404, it means the name doesn't exist.
+        const actualAccountType = res.ok ? "Premium" : "Cracked";
         
         localStorage.setItem('username', username);
         localStorage.setItem('account_type', actualAccountType);
@@ -96,7 +96,7 @@ async function login(e) {
         checkLogin();
         
     } catch (err) {
-        // Fallback in case the API goes down
+        // Fallback in case the API goes down completely or the user has no internet
         console.warn("Verification API offline. Defaulting to Cracked.");
         localStorage.setItem('username', username);
         localStorage.setItem('account_type', "Cracked");
