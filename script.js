@@ -313,43 +313,65 @@ function renderRecentPurchases() {
 
 init();
 
-// --- [ ANTI-INSPECT SYSTEM ] ---
-
-const blockScreen = document.getElementById('block-screen');
-
-function slapUser() {
-    if (blockScreen) {
-        blockScreen.classList.remove('hidden');
-        // Optional: play a sound or log the attempt
-        console.warn("Unauthorized inspection attempt detected.");
+// --- [ NUCLEAR ANTI-INSPECT SYSTEM ] ---
+(function() {
+    // 1. The Slap: Completely wipe the page and replace it
+    function nukePage() {
+        document.body.innerHTML = `
+            <div style="height: 100vh; width: 100vw; background-color: #2e1065; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif; text-align: center; padding: 20px;">
+                <h1 style="font-size: 3rem; font-weight: 900; margin-bottom: 10px; color: #ef4444;">ACCESS DENIED</h1>
+                <p style="color: #d8b4fe; max-width: 400px; margin-bottom: 30px;">Developer tools are disabled to protect transaction integrity.</p>
+                <button onclick="location.reload()" style="background-color: #9333ea; border: none; padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;">Return to Store</button>
+            </div>
+        `;
     }
-}
 
-// 1. Disable Right-Click
-document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    slapUser();
-});
+    // 2. Prevent Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
+    document.addEventListener('keydown', function(e) {
+        if (
+            e.key === "F12" || 
+            (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) || 
+            (e.ctrlKey && e.key === "U" || e.key === "u")
+        ) {
+            e.preventDefault();
+            nukePage();
+            return false;
+        }
+    });
 
-// 2. Disable Key Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
-document.addEventListener('keydown', (e) => {
-    if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
-        (e.ctrlKey && e.key === "u")
-    ) {
+    // 3. Prevent Right Click completely
+    document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
-        slapUser();
-    }
-});
+        nukePage();
+    });
 
-// 3. The "Debugger" Trap (Professional Troll Move)
-// This creates a loop that pauses the browser execution ONLY if DevTools is open.
-setInterval(() => {
-    const startTime = performance.now();
-    debugger;
-    const endTime = performance.now();
-    if (endTime - startTime > 100) {
-        slapUser();
-    }
-}, 1000);
+    // 4. The Aggressive Debugger Trap
+    // This fires constantly. If DevTools is open, it freezes their browser.
+    setInterval(function() {
+        const before = performance.now();
+        debugger; 
+        const after = performance.now();
+        if (after - before > 100) {
+            nukePage(); // If it took too long, DevTools is open. Nuke it.
+        }
+    }, 500);
+
+    // 5. Window Resize Detection
+    // If DevTools opens docked to the side/bottom, the screen suddenly shrinks.
+    const threshold = 160;
+    setInterval(function() {
+        if (window.outerWidth - window.innerWidth > threshold || 
+            window.outerHeight - window.innerHeight > threshold) {
+            nukePage();
+        }
+    }, 1000);
+
+    // 6. Console Spam
+    // Blinds them if they manage to get the console open
+    setInterval(function() {
+        console.clear();
+        console.log("%cSTOP!", "color: red; font-size: 50px; font-weight: bold;");
+        console.log("%cThis is a restricted area. Do not paste anything here.", "font-size: 18px;");
+    }, 100);
+})();
+// --- [ END NUCLEAR ANTI-INSPECT ] ---
