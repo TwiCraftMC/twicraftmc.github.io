@@ -71,7 +71,8 @@ function checkLogin() {
 async function login(e) { 
     e.preventDefault(); 
     
-    const username = document.getElementById('login-username').value;
+    // Grab what the user typed (could be lowercase like "dream")
+    const inputUsername = document.getElementById('login-username').value;
     const btn = e.target.querySelector('button[type="submit"]');
     const originalText = btn ? btn.innerHTML : "Login";
     
@@ -82,23 +83,30 @@ async function login(e) {
     }
     
     try {
-        // Query the PlayerDB API (The industry standard for web-based CORS lookups)
-        const res = await fetch(`https://playerdb.co/api/player/minecraft/${username}`);
+        const res = await fetch(`https://playerdb.co/api/player/minecraft/${inputUsername}`);
         
-        // If the API finds the player, res.ok is true (Premium). 
-        // If the username doesn't exist on Mojang, it throws a 404 (Cracked).
-        const actualAccountType = res.ok ? "Premium" : "Cracked";
+        let finalUsername = inputUsername; // Default to their input
+        let actualAccountType = "Cracked";
         
-        localStorage.setItem('username', username);
+        // If the API finds the player (200 OK)
+        if (res.ok) {
+            const data = await res.json();
+            // Extract the officially capitalized name from Mojang's servers!
+            finalUsername = data.data.player.username; 
+            actualAccountType = "Premium";
+        }
+        
+        // Save the corrected name and type
+        localStorage.setItem('username', finalUsername);
         localStorage.setItem('account_type', actualAccountType);
         localStorage.setItem('cart', '{}'); 
         cart = {}; 
         checkLogin();
         
     } catch (err) {
-        // Fallback in case the API goes down completely or the user has no internet
+        // Fallback in case the API goes down
         console.warn("Verification API offline. Defaulting to Cracked.");
-        localStorage.setItem('username', username);
+        localStorage.setItem('username', inputUsername);
         localStorage.setItem('account_type', "Cracked");
         localStorage.setItem('cart', '{}'); 
         cart = {}; 
