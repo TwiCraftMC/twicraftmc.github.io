@@ -76,11 +76,16 @@ function copyIP() { navigator.clipboard.writeText(document.getElementById('serve
 function showSection(sectionId) {
     document.getElementById('section-home').classList.add('hidden');
     document.getElementById('section-packages').classList.add('hidden');
+    
+    // Remove the highlight from static links (like the Homepage button)
     document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
     
     if (sectionId === 'home') {
         document.getElementById('section-home').classList.remove('hidden');
         document.getElementById('nav-home').classList.add('active');
+        
+        // Force the dynamic category list to refresh and remove its highlight
+        renderCategories(); 
     } else {
         document.getElementById('section-packages').classList.remove('hidden');
         setCategory(sectionId);
@@ -156,37 +161,71 @@ function renderPackages() {
     const catName = storeData.categories[activeCategory] || "Unknown Category";
     title.textContent = catName;
 
-    // Restore your original robust matching logic
     const normalize = (str) => String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
     const safeActiveId = normalize(activeCategory);
     const safeActiveName = normalize(catName);
 
-    // Sort by price high to low just like your original code
-    let sortedPackages = Object.entries(storeData.packages).sort((a, b) => b[1].price - a[1].price);
-
-    // Alphabetical Sorting for Crate Keys
-    if (safeActiveName.includes("key") || safeActiveId.includes("key")) {
-        sortedPackages.sort((a, b) => a[1].name.localeCompare(b[1].name));
-    }
-
-    for (const [id, pkg] of sortedPackages) {
+    // 1. Get all packages that belong to the current active category
+    let categoryPackages = Object.entries(storeData.packages).filter(([id, pkg]) => {
         const safePkgCat = normalize(pkg.category || '');
+        return safePkgCat === safeActiveId || safePkgCat === safeActiveName;
+    });
+
+    if (categoryPackages.length > 0) hasPackages = true;
+
+    // Helper to generate the package HTML block
+    const generatePackageHTML = (id, pkg) => `
+        <div class="flex items-center justify-between p-5 bg-purple-900/30 border border-purple-800/50 rounded-xl hover:bg-purple-800/40 transition">
+            <h4 class="text-sm font-bold text-purple-100 uppercase">${pkg.name}</h4>
+            <div class="flex items-center gap-6">
+                <span class="text-purple-300 font-black">₱${formatMoney(pkg.price)}</span>
+                <button onclick="addToCart('${id}')" class="bg-purple-700 hover:bg-purple-600 text-white font-black py-2 px-6 rounded-lg text-[11px] border border-purple-600/50 shadow-sm">
+                    ADD TO CART
+                </button>
+            </div>
+        </div>`;
+
+    // 2. Custom Grouping Logic for "Keys" Category
+    if (safeActiveName.includes("key") || safeActiveId.includes("key")) {
         
-        if (safePkgCat === safeActiveId || safePkgCat === safeActiveName) {
-            hasPackages = true;
-            grid.innerHTML += `
-                <div class="flex items-center justify-between p-5 bg-purple-900/30 border border-purple-800/50 rounded-xl hover:bg-purple-800/40 transition">
-                    <h4 class="text-sm font-bold text-purple-100 uppercase">${pkg.name}</h4>
-                    <div class="flex items-center gap-6">
-                        <span class="text-purple-300 font-black">₱${formatMoney(pkg.price)}</span>
-                        <button onclick="addToCart('${id}')" class="bg-purple-700 hover:bg-purple-600 text-white font-black py-2 px-6 rounded-lg text-[11px] border border-purple-600/50 shadow-sm">
-                            ADD TO CART
-                        </button>
-                    </div>
-                </div>`;
+        // Separate the keys into their specific groups
+        let twicraftKeys = categoryPackages.filter(([id, pkg]) => pkg.name.toLowerCase().includes("twicraftmc"));
+        let godKeys = categoryPackages.filter(([id, pkg]) => pkg.name.toLowerCase().includes("god"));
+        let otherKeys = categoryPackages.filter(([id, pkg]) => !pkg.name.toLowerCase().includes("twicraftmc") && !pkg.name.toLowerCase().includes("god"));
+
+        // Sort each group by price (High to Low)
+        const sortByPrice = (a, b) => b[1].price - a[1].price;
+        twicraftKeys.sort(sortByPrice);
+        godKeys.sort(sortByPrice);
+        otherKeys.sort(sortByPrice);
+
+        // Render God Keys Group
+        if (godKeys.length > 0) {
+            grid.innerHTML += `<div class="col-span-1 mt-4 mb-1"><h3 class="text-purple-400 font-bold uppercase text-[10px] tracking-widest border-b border-purple-800/50 pb-2">God Keys</h3></div>`;
+            godKeys.forEach(([id, pkg]) => grid.innerHTML += generatePackageHTML(id, pkg));
         }
+
+        // Render TwiCraftMC Keys Group
+        if (twicraftKeys.length > 0) {
+            grid.innerHTML += `<div class="col-span-1 mt-2 mb-1"><h3 class="text-purple-400 font-bold uppercase text-[10px] tracking-widest border-b border-purple-800/50 pb-2">TwiCraftMC Keys</h3></div>`;
+            twicraftKeys.forEach(([id, pkg]) => grid.innerHTML += generatePackageHTML(id, pkg));
+        }
+
+        // Render Any Leftover Keys Group
+        if (otherKeys.length > 0) {
+            grid.innerHTML += `<div class="col-span-1 mt-4 mb-1"><h3 class="text-purple-400 font-bold uppercase text-[10px] tracking-widest border-b border-purple-800/50 pb-2">Other Keys</h3></div>`;
+            otherKeys.forEach(([id, pkg]) => grid.innerHTML += generatePackageHTML(id, pkg));
+        }
+
+    } else {
+        // 3. Normal Rendering for all other categories (Sorted High to Low)
+        categoryPackages.sort((a, b) => b[1].price - a[1].price);
+        categoryPackages.forEach(([id, pkg]) => {
+            grid.innerHTML += generatePackageHTML(id, pkg);
+        });
     }
 
+    // 4. Handle Empty Categories
     if (!hasPackages) {
         grid.innerHTML = `
             <div class="w-full flex flex-col items-center justify-center py-12 rounded-xl border border-purple-800 border-dashed">
@@ -241,7 +280,19 @@ function renderCart() {
 }
 
 function checkout() { if (Object.keys(cart).length === 0) return; document.getElementById('checkout-modal').classList.remove('hidden'); }
-function closeCheckout() { document.getElementById('checkout-modal').classList.add('hidden'); if (pollInterval) clearInterval(pollInterval); }
+function closeCheckout() { 
+    // Hide the modal and stop listening for the API
+    document.getElementById('checkout-modal').classList.add('hidden'); 
+    if (pollInterval) clearInterval(pollInterval); 
+
+    // Reset the modal views back to their default state for the next time
+    document.getElementById('checkout-form-view').classList.remove('hidden');
+    document.getElementById('checkout-qr-view').classList.add('hidden');
+    document.getElementById('checkout-success-view').classList.add('hidden');
+
+    // Clear the phone number input
+    document.getElementById('checkout-phone').value = '';
+}
 
 async function submitPhone(e) { 
     e.preventDefault(); 
